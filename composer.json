@@ -1,0 +1,21 @@
+{
+    "name": "hanneskod/jsondb",
+    "description": "Flat file db with a single json file as backend",
+    "keywords": ["json", "database"],
+    "homepage": "https://github.com/hanneskod/jsondb",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Hannes Forsgård",
+            "email": "hannes.forsgard@fripost.org"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "hanneskod\\jsondb\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.5"
+    }
+}
