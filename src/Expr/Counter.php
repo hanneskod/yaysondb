@@ -13,14 +13,14 @@ namespace hanneskod\yaysondb\Expr;
 abstract class Counter implements \hanneskod\yaysondb\Expr
 {
     /**
-     * @var hanneskod\yaysondb\Expr[] Loaded expressions
+     * @var \hanneskod\yaysondb\Expr[] Loaded expressions
      */
     protected $exprs = [];
 
     /**
      * Load expressions
      *
-     * @param hanneskod\yaysondb\Expr ...$exprs Any number of expressions
+     * @param \hanneskod\yaysondb\Expr ...$exprs Any number of expressions
      */
     public function __construct(\hanneskod\yaysondb\Expr ...$exprs)
     {

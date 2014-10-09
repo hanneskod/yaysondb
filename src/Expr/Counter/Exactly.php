@@ -21,7 +21,7 @@ class Exactly extends \hanneskod\yaysondb\Expr\Counter
      * Load expressions
      *
      * @param int $count
-     * @param hanneskod\yaysondb\Expr ...$exprs Any number of expressions
+     * @param \hanneskod\yaysondb\Expr ...$exprs Any number of expressions
      */
     public function __construct(\hanneskod\yaysondb\Expr ...$exprs)
     {

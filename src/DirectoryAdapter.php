@@ -59,7 +59,7 @@ class DirectoryAdapter implements Adapter
      * Create filename for id
      *
      * @param  string $id
-     * @return stirng
+     * @return string
      */
     private function buildFilename($id)
     {

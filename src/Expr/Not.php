@@ -13,14 +13,14 @@ namespace hanneskod\yaysondb\Expr;
 class Not implements \hanneskod\yaysondb\Expr
 {
     /**
-     * @var hanneskod\yaysondb\Expr Expression to negate
+     * @var \hanneskod\yaysondb\Expr Expression to negate
      */
     private $expr;
 
     /**
      * Load expression
      *
-     * @param hanneskod\yaysondb\Expr $expr
+     * @param \hanneskod\yaysondb\Expr $expr
      */
     public function __construct(\hanneskod\yaysondb\Expr $expr)
     {
