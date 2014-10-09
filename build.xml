@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="jsondb" basedir="." default="buildAll">
+<project name="yaysondb" basedir="." default="buildAll">
     <property name="TEMP_DIR" value="/tmp"/>
     <property name="BUILD_BASE_URL" value="https://raw.github.com/hanneskod/pskeleton/master/build/tree.zip"/>
 

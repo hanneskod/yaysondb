@@ -1,9 +1,10 @@
 {
-    "name": "hanneskod/jsondb",
+    "name": "hanneskod/yaysondb",
     "description": "Flat file db with a single json file as backend",
     "keywords": ["json", "database"],
-    "homepage": "https://github.com/hanneskod/jsondb",
+    "homepage": "https://github.com/hanneskod/yaysondb",
     "type": "library",
+    "license": "WTFPL",
     "authors": [
         {
             "name": "Hannes Forsgård",
@@ -12,10 +13,10 @@
     ],
     "autoload": {
         "psr-4": {
-            "hanneskod\\jsondb\\": "src/"
+            "hanneskod\\yaysondb\\": "src/"
         }
     },
     "require": {
-        "php": ">=5.5"
+        "php": ">=5.6"
     }
 }

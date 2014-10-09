@@ -3,4 +3,3 @@ language: php
 php:
     - hhvm
     - 5.6
-    - 5.5
