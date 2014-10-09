@@ -13,5 +13,6 @@ class ExpressionsTest extends \PHPUnit_Framework_TestCase
             // en register_autloader där...
         // TODO blir det snyggt med nya badges?
             // i så fall börja att använda i pskeleton...
+        // varför inte helt använda sig av flysystem istället för adapter.... ??
     }
 }
