@@ -3,14 +3,16 @@
  * This program is free software. It comes without any warranty.
  */
 
-namespace hanneskod\yaysondb;
+namespace hanneskod\yaysondb\Adapter;
+
+use hanneskod\yaysondb\Exception\AdapterException;
 
 /**
  * IO from specified directory
  *
  * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
-class DirectoryAdapter implements Adapter
+class DirectoryAdapter implements \hanneskod\yaysondb\Adapter
 {
     /**
      * @var string The directory to read and write from
@@ -32,13 +34,13 @@ class DirectoryAdapter implements Adapter
      *
      * @param  string $id
      * @return string
-     * @throws Exception\AdapterException If resource is not found
+     * @throws AdapterException If resource is not found
      */
     public function read($id)
     {
         $filename = $this->buildFilename($id);
         if (!is_readable($filename)) {
-            throw new Exception\AdapterException("Unable to locate collection <$id>");
+            throw new AdapterException("Unable to locate collection <$id>");
         }
         return file_get_contents($filename);
     }

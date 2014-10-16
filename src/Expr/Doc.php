@@ -24,15 +24,15 @@ class Doc implements \hanneskod\yaysondb\Expr
      */
     public function __construct(array $query)
     {
-        /** @var Operator $op */
-        foreach ($query as $key => $op) {
-            if (!$op instanceof \hanneskod\yaysondb\Expr) {
+        /** @var \hanneskod\yaysondb\Expr $expr */
+        foreach ($query as $key => $expr) {
+            if (!$expr instanceof \hanneskod\yaysondb\Expr) {
                 throw new \hanneskod\yaysondb\Exception\InvalidArgumentException(
-                    "Query operator must implement the Operator interface, found: ".gettype($op)
+                    "Query operator must implement the Operator interface, found: ".gettype($expr)
                 );
             }
-            $this->exprs[] = function (array $doc) use ($key, $op) {
-                return isset($doc[$key]) && $op->evaluate($doc[$key]);
+            $this->exprs[] = function (array $doc) use ($key, $expr) {
+                return isset($doc[$key]) && $expr->evaluate($doc[$key]);
             };
         }
     }
@@ -55,6 +55,7 @@ class Doc implements \hanneskod\yaysondb\Expr
                 return false;
             }
         }
+
         return true;
     }
 }

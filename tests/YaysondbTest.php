@@ -20,7 +20,7 @@ class YaysondbTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testPersistCollection()
+    public function testCommitCollection()
     {
         $adapter = $this->getMock('hanneskod\yaysondb\Adapter');
         $adapter->expects($this->once())
@@ -32,6 +32,6 @@ class YaysondbTest extends \PHPUnit_Framework_TestCase
             ->with('mycollection');
 
         $db = new Yaysondb($adapter);
-        $db->persist('mycollection');
+        $db->commit('mycollection');
     }
 }

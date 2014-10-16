@@ -23,10 +23,10 @@ class Exactly extends \hanneskod\yaysondb\Expr\Counter
      * @param int $count
      * @param \hanneskod\yaysondb\Expr ...$exprs Any number of expressions
      */
-    public function __construct(\hanneskod\yaysondb\Expr ...$exprs)
+    public function __construct($count, \hanneskod\yaysondb\Expr ...$exprs)
     {
         $this->count = $count;
-        parent::__construct($exprs);
+        parent::__construct(...$exprs);
     }
 
     /**

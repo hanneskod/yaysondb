@@ -1,6 +1,6 @@
 <?php
 
-namespace hanneskod\yaysondb;
+namespace hanneskod\yaysondb\Adapter;
 
 class DirectoryAdapterTest extends \PHPUnit_Framework_TestCase
 {

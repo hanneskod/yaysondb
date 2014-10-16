@@ -10,7 +10,7 @@ namespace hanneskod\yaysondb;
  *
  * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
-class Collection implements \JsonSerializable, \Countable
+class Collection extends DocumentSet implements \Countable, \JsonSerializable
 {
     /**
      * @var array Internal document store
@@ -60,23 +60,6 @@ class Collection implements \JsonSerializable, \Countable
             $this->collection[$id],
             ['_id' => $id]
         );
-    }
-
-    /**
-     * Get all documents matching expression
-     *
-     * @param  Expr $expr Search expression
-     * @return \Generator
-     */
-    public function find(Expr $expr)
-    {
-        /** @var array $doc */
-        foreach ($this->collection as $id => $doc) {
-            $doc['_id'] = $id;
-            if ($expr->evaluate($doc)) {
-                yield $id => $doc;
-            }
-        }
     }
 
     /**
@@ -162,13 +145,13 @@ class Collection implements \JsonSerializable, \Countable
     }
 
     /**
-     * Specify data which should be serialized to JSON
+     * Get iterator for the complete collection
      *
-     * @return array
+     * @return \Traversable
      */
-    public function jsonSerialize()
+    public function getIterator()
     {
-        return $this->collection;
+        return new \ArrayIterator($this->collection);
     }
 
     /**
@@ -179,6 +162,16 @@ class Collection implements \JsonSerializable, \Countable
     public function count()
     {
         return count($this->collection);
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return $this->collection;
     }
 
     /**

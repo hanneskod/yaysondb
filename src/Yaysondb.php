@@ -64,7 +64,7 @@ class Yaysondb
      *
      * @param  string $id
      */
-    public function persist($id)
+    public function commit($id)
     {
         $this->adapter->write(
             $id,
