@@ -1,6 +1,6 @@
 {
     "name": "hanneskod/yaysondb",
-    "description": "Flat file db with a single json file as backend",
+    "description": "Flat file db storing data as json arrays",
     "keywords": ["json", "database", "jsondb", "nosql"],
     "homepage": "https://github.com/hanneskod/yaysondb",
     "type": "library",
