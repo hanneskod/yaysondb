@@ -1,14 +1,9 @@
 <?php
-/**
- * This program is free software. It comes without any warranty.
- */
 
 namespace hanneskod\yaysondb\Expr\Set;
 
 /**
  * Expression must evaluate to true for exact numer of items in list
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 class ListExactly extends \hanneskod\yaysondb\Expr\Set
 {

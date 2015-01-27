@@ -1,14 +1,9 @@
 <?php
-/**
- * This program is free software. It comes without any warranty.
- */
 
 namespace hanneskod\yaysondb\Expr;
 
 /**
  * A counter counts the success of contained expressions
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 abstract class Counter implements \hanneskod\yaysondb\Expr
 {

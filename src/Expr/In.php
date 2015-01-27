@@ -1,14 +1,9 @@
 <?php
-/**
- * This program is free software. It comes without any warranty.
- */
 
 namespace hanneskod\yaysondb\Expr;
 
 /**
  * Check if $operand is included in list
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 class In implements \hanneskod\yaysondb\Expr
 {

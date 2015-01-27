@@ -1,14 +1,9 @@
 <?php
-/**
- * This program is free software. It comes without any warranty.
- */
 
 namespace hanneskod\yaysondb;
 
 /**
  * Iterator with filtered content
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 abstract class Filter extends DocumentSet
 {

@@ -1,14 +1,9 @@
 <?php
-/**
- * This program is free software. It comes without any warranty.
- */
 
 namespace hanneskod\yaysondb\Expr\Set;
 
 /**
  * Expression must evaluate to true for each list item
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 class ListAll extends \hanneskod\yaysondb\Expr\Set
 {

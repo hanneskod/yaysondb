@@ -1,14 +1,9 @@
 <?php
-/**
- * This program is free software. It comes without any warranty.
- */
 
 namespace hanneskod\yaysondb\Expr;
 
 /**
  * Evaluate documents and nested subdocuments
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 class Doc implements \hanneskod\yaysondb\Expr
 {

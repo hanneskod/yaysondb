@@ -1,7 +1,4 @@
 <?php
-/**
- * This program is free software. It comes without any warranty.
- */
 
 namespace hanneskod\yaysondb\Adapter;
 
@@ -9,8 +6,6 @@ use hanneskod\yaysondb\Exception\AdapterException;
 
 /**
  * IO from specified directory
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 class DirectoryAdapter implements \hanneskod\yaysondb\Adapter
 {

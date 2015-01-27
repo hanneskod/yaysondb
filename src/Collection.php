@@ -1,14 +1,9 @@
 <?php
-/**
- * This program is free software. It comes without any warranty.
- */
 
 namespace hanneskod\yaysondb;
 
 /**
  * Yayson database engine
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 class Collection extends DocumentSet implements \Countable, \JsonSerializable
 {
@@ -182,8 +177,7 @@ class Collection extends DocumentSet implements \Countable, \JsonSerializable
     private function generateId()
     {
         $id = time() . rand(1000, 9999);
-        if ($this->containsDocument($id)) return $this->generateId();
-        return $id;
+        return $this->containsDocument($id) ? $this->generateId() : $id;
     }
 
     /**

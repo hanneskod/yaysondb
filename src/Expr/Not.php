@@ -1,14 +1,9 @@
 <?php
-/**
- * This program is free software. It comes without any warranty.
- */
 
 namespace hanneskod\yaysondb\Expr;
 
 /**
  * Negate expression
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 class Not implements \hanneskod\yaysondb\Expr
 {

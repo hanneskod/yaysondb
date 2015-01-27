@@ -1,14 +1,9 @@
 <?php
-/**
- * This program is free software. It comes without any warranty.
- */
 
 namespace hanneskod\yaysondb\Expr;
 
 /**
  * Evaluate expression for each item in list
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 abstract class Set implements \hanneskod\yaysondb\Expr
 {

@@ -1,14 +1,9 @@
 <?php
-/**
- * This program is free software. It comes without any warranty.
- */
 
 namespace hanneskod\yaysondb\Filter;
 
 /**
  * Order by filter
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 class OrderBy extends \hanneskod\yaysondb\Filter
 {

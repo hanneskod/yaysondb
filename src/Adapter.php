@@ -1,14 +1,9 @@
 <?php
-/**
- * This program is free software. It comes without any warranty.
- */
 
 namespace hanneskod\yaysondb;
 
 /**
  * IO adapter
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 interface Adapter
 {

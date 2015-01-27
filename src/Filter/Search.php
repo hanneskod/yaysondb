@@ -1,7 +1,4 @@
 <?php
-/**
- * This program is free software. It comes without any warranty.
- */
 
 namespace hanneskod\yaysondb\Filter;
 
@@ -9,8 +6,6 @@ use hanneskod\yaysondb\Expr;
 
 /**
  * Filter documents matching search expression
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 class Search extends \hanneskod\yaysondb\Filter
 {

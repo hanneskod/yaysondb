@@ -1,14 +1,9 @@
 <?php
-/**
- * This program is free software. It comes without any warranty.
- */
 
 namespace hanneskod\yaysondb;
 
 /**
  * Filterable set of documents
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 abstract class DocumentSet implements \IteratorAggregate
 {

@@ -1,14 +1,9 @@
 <?php
-/**
- * This program is free software. It comes without any warranty.
- */
 
 namespace hanneskod\yaysondb\Expr;
 
 /**
  * Check if $operand matches regular expression
- *
- * @author Hannes Forsgård <hannes.forsgard@fripost.org>
  */
 class Regexp implements \hanneskod\yaysondb\Expr
 {
