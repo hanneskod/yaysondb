@@ -257,7 +257,7 @@ class OperatorsTest extends \PHPUnit_Framework_TestCase
 
     private function createTrueExpr()
     {
-        $expr = $this->getMock('\hanneskod\yaysondb\Expr');
+        $expr = $this->createMock('\hanneskod\yaysondb\Expr');
         $expr->expects($this->any())
             ->method('evaluate')
             ->will($this->returnValue(true));
@@ -266,7 +266,7 @@ class OperatorsTest extends \PHPUnit_Framework_TestCase
 
     private function createFalseExpr()
     {
-        $expr = $this->getMock('\hanneskod\yaysondb\Expr');
+        $expr = $this->createMock('\hanneskod\yaysondb\Expr');
         $expr->expects($this->any())
             ->method('evaluate')
             ->will($this->returnValue(false));

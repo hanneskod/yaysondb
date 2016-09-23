@@ -29,7 +29,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(
             [],
             (new Collection)->findOne(
-                $this->getMock('hanneskod\yaysondb\Expr')
+                $this->createMock('hanneskod\yaysondb\Expr')
             ),
             'FindOne should return [] if no document match'
         );
@@ -40,7 +40,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $doc = ['_id' => 'myid'];
         $docJson = '{"myid":{}}';
 
-        $expr = $this->getMock('hanneskod\yaysondb\Expr');
+        $expr = $this->createMock('hanneskod\yaysondb\Expr');
         $expr->expects($this->once())
             ->method('evaluate')
             ->with($doc)
@@ -97,7 +97,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdate()
     {
-        $expr = $this->getMock('hanneskod\yaysondb\Expr');
+        $expr = $this->createMock('hanneskod\yaysondb\Expr');
         $expr->expects($this->once())
             ->method('evaluate')
             ->will($this->returnValue(true));
@@ -144,7 +144,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateDocumentId()
     {
-        $expr = $this->getMock('hanneskod\yaysondb\Expr');
+        $expr = $this->createMock('hanneskod\yaysondb\Expr');
         $expr->expects($this->once())
             ->method('evaluate')
             ->will($this->returnValue(true));
@@ -164,7 +164,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateExceptionWhenDocumentExists()
     {
-        $expr = $this->getMock('hanneskod\yaysondb\Expr');
+        $expr = $this->createMock('hanneskod\yaysondb\Expr');
         $expr->expects($this->once())
             ->method('evaluate')
             ->will($this->returnValue(true));
@@ -181,7 +181,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $doc = ['_id' => 'myid'];
         $docJson = '{"myid":{}}';
 
-        $expr = $this->getMock('hanneskod\yaysondb\Expr');
+        $expr = $this->createMock('hanneskod\yaysondb\Expr');
         $expr->expects($this->once())
             ->method('evaluate')
             ->with($doc)
