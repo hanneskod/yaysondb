@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace hanneskod\yaysondb\Adapter;
 
 use hanneskod\yaysondb\Exception\AdapterException;

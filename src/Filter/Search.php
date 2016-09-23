@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace hanneskod\yaysondb\Filter;
 
 use hanneskod\yaysondb\Expr;

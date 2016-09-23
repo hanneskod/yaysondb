@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace hanneskod\yaysondb\Filter;
 
 class OrderByTest extends \PHPUnit_Framework_TestCase
@@ -7,7 +9,7 @@ class OrderByTest extends \PHPUnit_Framework_TestCase
     public function testOrderBySingleKey()
     {
         $iter = new OrderBy('name');
-        
+
         $iter->setIterator(new \ArrayIterator([
             'B' => ['name' => 'B'],
             'A' => ['name' => 'A'],
@@ -28,7 +30,7 @@ class OrderByTest extends \PHPUnit_Framework_TestCase
     public function testOrderByDoubbleKeys()
     {
         $iter = new OrderBy('name', 'age');
-        
+
         $iter->setIterator(new \ArrayIterator([
             'C30' => ['name' => 'C', 'age' => 30],
             'A30' => ['name' => 'A', 'age' => 30],
