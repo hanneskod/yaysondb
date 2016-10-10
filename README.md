@@ -5,39 +5,50 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/hanneskod/yaysondb.svg?style=flat-square)](https://scrutinizer-ci.com/g/hanneskod/yaysondb)
 [![Dependency Status](https://img.shields.io/gemnasium/hanneskod/yaysondb.svg?style=flat-square)](https://gemnasium.com/hanneskod/yaysondb)
 
-Flat file db storing data as json arrays
+Flat file db in pure php
 
 Why?
 ----
-Partly as a learning exercise, partly since I needed a simple and PHP only DB 
+Partly as a learning exercise, partly since I needed a simple and PHP only DB
 for some cli scripts.
 
 ### Features
 
- * Enforces `_id` field in a manner similar to mongoDB.
  * Powerfull searches using search documents.
- * Supports limits and orderBy expressions.
- * No concurrency checks.
- * Supports loading collections from directory.
+ * Supports limits, ordering and custom filtering expressions.
+ * Multiple filesystem support through flysystem.
+ * Validates that source has note been altered before writing.
+ * Fast logging with the dedicated LogEngine.
 
 Installation
 ------------
-Install using [composer](http://getcomposer.org/). Exists as
-[hanneskod/yaysondb](https://packagist.org/packages/hanneskod/yaysondb)
-in the [packagist](https://packagist.org/) repository:
+```bash
+composer require hanneskod/yaysondb
+```
 
-    composer require hanneskod/yaysondb
-
-CRUD usage
-----------
+Usage
+-----
 [`Collection`](/src/Collection.php) works on json data.
 
 ### Create
 
 ```php
-$collection = new \hanneskod\yaysondb\Collection($jsonEncodedArray);
-$collection->insert(['_id' => 'some-id', 'name' => 'foobar']);
-$updatedJsonContent = json_encode($collection);
+use hanneskod\yaysondb\Collection;
+use hanneskod\yaysondb\Engine\FlysystemEngine;
+use hanneskod\yaysondb\Engine\JsonDecoder;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Adapter\Local;
+
+$collection = new Collection(
+    new FlysystemEngine(
+        'name-of-source-file',
+        new Filesystem(new Local('path-to-files')),
+        new JsonDecoder
+    )
+);
+
+$collection->insert(['name' => 'foobar']);
+$collection->commit();
 ```
 
 ### Read
@@ -56,9 +67,9 @@ $result = $collection->find(
     ])
 );
 
-// The result set is iterable
-foreach ($result as $id => $doc) {
-    // ...
+// The result set is filterable
+foreach ($result->limit(2) as $id => $doc) {
+    // iterate over the first 2 results
 }
 ```
 
@@ -110,17 +121,13 @@ Using the DB wrapper
 use hanneskod\yaysondb\Yaysondb;
 use hanneskod\yaysondb\Adapter\DirectoryAdapter;
 
-$db = new Yaysondb(new DirectoryAdapter('path-to-json-files'));
+$db = new Yaysondb([
+    'mydata' => $collection
+]);
 
-// handle to path-to-json-files/mycollection.json
-$db->mycollection;
+// access collection through property or collection()
+$db->mydata === $db->collection('mydata');
 
-// commit collection updates
-$db->commit('mycollection');
+// commit changes in all collection
+$db->commit();
 ```
-
-Credits
--------
-Yaysondb is covered under the [WTFPL](http://www.wtfpl.net/)
-
-@author Hannes Forsgård (hannes.forsgard@fripost.org)

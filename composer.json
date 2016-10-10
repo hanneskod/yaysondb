@@ -16,7 +16,16 @@
             "hanneskod\\yaysondb\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "hanneskod\\yaysondb\\": "tests/"
+        }
+    },
     "require": {
-        "php": "^7.0"
+        "php": "^7.0",
+        "league/flysystem": "^1.0"
+    },
+    "require-dev": {
+        "league/flysystem-memory": "^1.0"
     }
 }

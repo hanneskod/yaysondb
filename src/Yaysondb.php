@@ -5,67 +5,73 @@ declare(strict_types = 1);
 namespace hanneskod\yaysondb;
 
 /**
- * Collection handler
+ * Handle to a defined set of collections
  */
-class Yaysondb
+class Yaysondb implements TransactableInterface
 {
     /**
-     * @var Adapter IO adapter
+     * @var Collection[] Loaded collections
      */
-    private $adapter;
+    private $collections;
 
     /**
-     * @var Collection[] List of loaded collections
-     */
-    private $collections = [];
-
-    /**
-     * Register IO adapter
+     * Load collections
      *
-     * @param Adapter $adapter
+     * @param CollectionInterface[] $collections Map of identifiers to collections
      */
-    public function __construct(Adapter $adapter)
+    public function __construct(array $collections)
     {
-        $this->adapter = $adapter;
+        $this->collections = $collections;
     }
 
     /**
      * Get collection
      *
-     * @param  string $id
-     * @return Collection
+     * @throws Exception\LogicException If id is not defined
      */
-    public function collection($id)
+    public function collection(string $id): CollectionInterface
     {
         if (!isset($this->collections[$id])) {
-            $this->collections[$id] = new Collection(
-                $this->adapter->read($id)
-            );
+            throw new Exception\LogicException("Trying to access undefined collection $id");
         }
+
         return $this->collections[$id];
     }
 
     /**
      * Magic method to allow collection access through property name
-     *
-     * @param  string $id
-     * @return Collection
      */
-    public function __get($id)
+    public function __get(string $id): CollectionInterface
     {
         return $this->collection($id);
     }
 
-    /**
-     * Write collection to persistent storage
-     *
-     * @param  string $id
-     */
-    public function commit($id)
+    public function commit()
     {
-        $this->adapter->write(
-            $id,
-            json_encode($this->collection($id), JSON_PRETTY_PRINT)
-        );
+        foreach ($this->collections as $collection) {
+            if ($collection->inTransaction()) {
+                $collection->commit();
+            }
+        }
+    }
+
+    public function inTransaction(): bool
+    {
+        foreach ($this->collections as $collection) {
+            if ($collection->inTransaction()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function reset()
+    {
+        foreach ($this->collections as $collection) {
+            if ($collection->inTransaction()) {
+                $collection->reset();
+            }
+        }
     }
 }
