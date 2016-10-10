@@ -17,7 +17,7 @@ for some cli scripts.
  * Powerfull searches using search documents.
  * Supports limits, ordering and custom filtering expressions.
  * Multiple filesystem support through flysystem.
- * Validates that source has note been altered before writing.
+ * Validates that source has not been altered before writing.
  * Fast logging with the dedicated LogEngine.
 
 Installation
@@ -28,7 +28,7 @@ composer require hanneskod/yaysondb
 
 Usage
 -----
-[`Collection`](/src/Collection.php) works on json data.
+[`Collection`](/src/Collection.php) contains your data structure.
 
 ### Create
 
@@ -128,6 +128,6 @@ $db = new Yaysondb([
 // access collection through property or collection()
 $db->mydata === $db->collection('mydata');
 
-// commit changes in all collection
+// commit changes in all collections
 $db->commit();
 ```
