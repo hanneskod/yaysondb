@@ -14,17 +14,11 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 {
     private function createDatabase(): Yaysondb
     {
-        $fs = new Filesystem(new MemoryAdapter);
-        $fs->write('data', '');
+        $menory = new Filesystem(new MemoryAdapter);
+        $menory->write('data', '');
 
         return new Yaysondb([
-            'data' => new Collection(
-                new FlysystemEngine(
-                    'data',
-                    $fs,
-                    new JsonDecoder
-                )
-            )
+            new FlysystemEngine('data', $menory)
         ]);
     }
 

@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace hanneskod\yaysondb;
 
+use hanneskod\yaysondb\Engine\EngineInterface;
+
 /**
  * Handle to a defined set of collections
  */
@@ -15,13 +17,43 @@ class Yaysondb implements TransactableInterface
     private $collections;
 
     /**
-     * Load collections
+     * Optionally load collection engines
      *
-     * @param CollectionInterface[] $collections Map of identifiers to collections
+     * @param EngineInterface[] $engines Maps identifiers to engines
      */
-    public function __construct(array $collections)
+    public function __construct(array $engines = [])
     {
-        $this->collections = $collections;
+        foreach ($engines as $engineId => $engine) {
+            $this->load(
+                $engine,
+                is_string($engineId) ? $engineId : ''
+            );
+        }
+    }
+
+    /**
+     * Load collection engine
+     */
+    public function load(EngineInterface $engine, string $engineId = ''): self
+    {
+        $this->collections[$engineId ?: $engine->getId()] = new Collection($engine);
+        return $this;
+    }
+
+    /**
+     * Check if handle contains collection with id
+     */
+    public function hasCollection(string $id): bool
+    {
+        return isset($this->collections[$id]);
+    }
+
+    /**
+     * Magic method to allow collection exploration through property names
+     */
+    public function __isset(string $id): bool
+    {
+        return $this->hasCollection($id);
     }
 
     /**
@@ -31,7 +63,7 @@ class Yaysondb implements TransactableInterface
      */
     public function collection(string $id): CollectionInterface
     {
-        if (!isset($this->collections[$id])) {
+        if (!$this->hasCollection($id)) {
             throw new Exception\LogicException("Trying to access undefined collection $id");
         }
 
@@ -39,7 +71,7 @@ class Yaysondb implements TransactableInterface
     }
 
     /**
-     * Magic method to allow collection access through property name
+     * Magic method to allow collection access through property names
      */
     public function __get(string $id): CollectionInterface
     {

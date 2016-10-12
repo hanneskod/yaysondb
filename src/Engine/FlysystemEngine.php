@@ -42,12 +42,17 @@ class FlysystemEngine implements EngineInterface
      */
     private $inTransaction;
 
-    public function __construct(string $fname, FilesystemInterface $fs, DecoderInterface $decoder)
+    public function __construct(string $fname, FilesystemInterface $fs, DecoderInterface $decoder = null)
     {
         $this->fname = $fname;
         $this->fs = $fs;
-        $this->decoder = $decoder;
+        $this->decoder = $decoder ?: $this->guessDecoder();
         $this->reset();
+    }
+
+    public function getId(): string
+    {
+        return $this->fname;
     }
 
     public function reset()
@@ -132,5 +137,20 @@ class FlysystemEngine implements EngineInterface
         $this->fs->update($this->fname, $raw);
         $this->hash = md5($raw);
         $this->inTransaction = false;
+    }
+
+    /**
+     * Create a decoder based of source file mime-type
+     */
+    private function guessDecoder(): DecoderInterface
+    {
+        switch ($this->fs->getMimetype($this->fname)) {
+            case 'application/x-httpd-php':
+                return new PhpDecoder;
+            case 'text/plain':
+            case 'application/json':
+            default:
+                return new JsonDecoder;
+        }
     }
 }

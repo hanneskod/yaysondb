@@ -12,6 +12,11 @@ use hanneskod\yaysondb\Exception\LogicException;
 class LogEngine implements EngineInterface
 {
     /**
+     * @var string
+     */
+    private $fname;
+
+    /**
      * @var resource Log stream
      */
     private $stream;
@@ -28,8 +33,14 @@ class LogEngine implements EngineInterface
 
     public function __construct(string $fname, DecoderInterface $decoder = null)
     {
+        $this->fname = $fname;
         $this->stream = fopen($fname, 'a+');
         $this->decoder = $decoder ?: new SerializingDecoder;
+    }
+
+    public function getId(): string
+    {
+        return $this->fname;
     }
 
     public function getIterator(): \Generator

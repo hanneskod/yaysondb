@@ -24,6 +24,14 @@ class FlysystemEngineTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testGetId()
+    {
+        $this->assertSame(
+            'foobar',
+            $this->createEngine([], 'foobar')->getId()
+        );
+    }
+
     public function testIteration()
     {
         $this->assertSame(
@@ -167,5 +175,39 @@ class FlysystemEngineTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($engine->inTransaction());
         $engine->commit();
         $this->assertFalse($engine->inTransaction());
+    }
+
+    public function testGuessPhpMimeType()
+    {
+        $flysystem = $this->prophesize(FilesystemInterface::CLASS);
+        $flysystem->getMimetype('data.php')->willReturn('application/x-httpd-php');
+        $flysystem->read('data.php')->willReturn('<?php return ["item" => ["foo"]];');
+
+        $engine = new FlysystemEngine(
+            'data.php',
+            $flysystem->reveal()
+        );
+
+        $this->assertSame(
+            ['foo'],
+            $engine->read('item')
+        );
+    }
+
+    public function testGuessJsonMimeType()
+    {
+        $flysystem = $this->prophesize(FilesystemInterface::CLASS);
+        $flysystem->getMimetype('data.json')->willReturn('application/json  ');
+        $flysystem->read('data.json')->willReturn('{"item": ["foo"]}');
+
+        $engine = new FlysystemEngine(
+            'data.json',
+            $flysystem->reveal()
+        );
+
+        $this->assertSame(
+            ['foo'],
+            $engine->read('item')
+        );
     }
 }

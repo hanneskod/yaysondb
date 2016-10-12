@@ -8,6 +8,13 @@ use hanneskod\yaysondb\Exception\LogicException;
 
 class LogEngineTest extends \PHPUnit_Framework_TestCase
 {
+    public function testGetId()
+    {
+        $this->assertSame(
+            'php://memory',
+            (new LogEngine('php://memory'))->getId()
+        );
+    }
     public function testExceptionOnWritingUsingId()
     {
         $this->setExpectedException(LogicException::CLASS);

@@ -28,27 +28,36 @@ composer require hanneskod/yaysondb
 
 Usage
 -----
-[`Collection`](/src/Collection.php) contains your data structure.
+
+### Setup
+
+[`Yaysondb`](/src/Yaysondb.php) works as a handler for multiple collections.
+
+```php
+use hanneskod\yaysondb\Yaysondb;
+use hanneskod\yaysondb\Engine\FlysystemEngine;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Adapter\Local;
+
+$db = new Yaysondb([
+    'collectionId' => new FlysystemEngine(
+        'data.json',
+        new Filesystem(new Local('path-to-files'))
+    )
+]);
+
+// access [`collection`](/src/CollectionInterface.php) through property or collection()
+$db->collectionId === $db->collection('collectionId');
+
+// commit changes in all loaded collections
+$db->commit();
+```
 
 ### Create
 
 ```php
-use hanneskod\yaysondb\Collection;
-use hanneskod\yaysondb\Engine\FlysystemEngine;
-use hanneskod\yaysondb\Engine\JsonDecoder;
-use League\Flysystem\Filesystem;
-use League\Flysystem\Adapter\Local;
-
-$collection = new Collection(
-    new FlysystemEngine(
-        'name-of-source-file',
-        new Filesystem(new Local('path-to-files')),
-        new JsonDecoder
-    )
-);
-
-$collection->insert(['name' => 'foobar']);
-$collection->commit();
+$db->collectionId->insert(['name' => 'foobar']);
+$db->collectionId->commit();
 ```
 
 ### Read
@@ -59,7 +68,7 @@ Create search documents using the [`Operators`](/src/Operators.php) class.
 use hanneskod\yaysondb\Operators as y;
 
 // Find all documents with an address in new york
-$result = $collection->find(
+$result = $db->collectionId->find(
     y::doc([
         'address' => y::doc([
             'town' => y::regexp('/new york/i')
@@ -112,22 +121,3 @@ values.
 
 `Collection::delete()` takes a search document as sole argument. Documents
 matching the search document are removed.
-
-Using the DB wrapper
---------------------
-[`Yaysondb`](/src/Yaysondb.php) works as a handler for multiple collections.
-
-```php
-use hanneskod\yaysondb\Yaysondb;
-use hanneskod\yaysondb\Adapter\DirectoryAdapter;
-
-$db = new Yaysondb([
-    'mydata' => $collection
-]);
-
-// access collection through property or collection()
-$db->mydata === $db->collection('mydata');
-
-// commit changes in all collections
-$db->commit();
-```

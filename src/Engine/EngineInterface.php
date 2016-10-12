@@ -10,6 +10,11 @@ use hanneskod\yaysondb\TransactableInterface;
 interface EngineInterface extends TransactableInterface, \IteratorAggregate
 {
     /**
+     * Get engine identifier
+     */
+    public function getId(): string;
+
+    /**
      * Remove all documents from source
      */
     public function clear();

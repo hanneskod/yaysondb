@@ -4,71 +4,114 @@ declare(strict_types = 1);
 
 namespace hanneskod\yaysondb;
 
+use hanneskod\yaysondb\Engine\EngineInterface;
+
 class YaysondbTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetCollection()
+    public function testLoad()
     {
-        $collection = $this->createMock(CollectionInterface::CLASS);
+        $engineProphecy = $this->prophesize(EngineInterface::CLASS);
+        $engineProphecy->getId()->willReturn('foobar');
+        $engine = $engineProphecy->reveal();
 
-        $db = new Yaysondb(['foo' => $collection]);
+        $db = new Yaysondb;
 
-        $this->assertSame(
-            $collection,
-            $db->collection('foo')
+        $db->load($engine, 'handle');
+
+        $this->assertTrue(
+            $db->hasCollection('handle')
         );
 
-        $this->assertSame(
-            $collection,
-            $db->foo
+        $this->assertEquals(
+            new Collection($engine),
+            $db->collection('handle')
+        );
+
+        $db->load($engine);
+
+        $this->assertEquals(
+            new Collection($engine),
+            $db->collection('foobar')
+        );
+
+        $this->assertTrue(
+            $db->hasCollection('foobar')
+        );
+
+        $this->assertTrue(
+            isset($db->foobar)
+        );
+    }
+
+    public function testLoadAtConstruct()
+    {
+        $engineProphecyA = $this->prophesize(EngineInterface::CLASS);
+        $engineProphecyA->getId()->willReturn('A');
+        $engineA = $engineProphecyA->reveal();
+
+        $engineProphecyB = $this->prophesize(EngineInterface::CLASS);
+        $engineProphecyB->getId()->willReturn('B');
+        $engineB = $engineProphecyB->reveal();
+
+        $db = new Yaysondb([$engineA, 'C' => $engineB]);
+
+        $this->assertEquals(
+            new Collection($engineA),
+            $db->collection('A')
+        );
+
+        $this->assertEquals(
+            new Collection($engineB),
+            $db->C
         );
     }
 
     public function testExceptionOnUnknownCollection()
     {
         $this->setExpectedException(Exception\LogicException::CLASS);
-        (new Yaysondb([]))->collection('does-not-exist');
+        (new Yaysondb)->collection('does-not-exist');
     }
 
     public function testCommit()
     {
-        $collA = $this->prophesize(CollectionInterface::CLASS);
-        $collA->inTransaction()->willReturn(false);
-        $collA->commit()->shouldNotBeCalled();
+        $engineA = $this->prophesize(EngineInterface::CLASS);
+        $engineA->inTransaction()->willReturn(false);
+        $engineA->commit()->shouldNotBeCalled();
 
-        $collB = $this->prophesize(CollectionInterface::CLASS);
-        $collB->inTransaction()->willReturn(true);
-        $collB->commit()->shouldBeCalled();
+        $engineB = $this->prophesize(EngineInterface::CLASS);
+        $engineB->inTransaction()->willReturn(true);
+        $engineB->commit()->shouldBeCalled();
 
-        (new Yaysondb([$collA->reveal(), $collB->reveal()]))->commit();
+        (new Yaysondb(['A' => $engineA->reveal(), 'B' => $engineB->reveal()]))->commit();
     }
 
     public function testInTransaction()
     {
-        $fresh = $this->prophesize(CollectionInterface::CLASS);
+        $fresh = $this->prophesize(EngineInterface::CLASS);
         $fresh->inTransaction()->willReturn(false);
 
-        $trans = $this->prophesize(CollectionInterface::CLASS);
+        $trans = $this->prophesize(EngineInterface::CLASS);
         $trans->inTransaction()->willReturn(true);
 
         $this->assertFalse(
-            (new Yaysondb([$fresh->reveal(), $fresh->reveal()]))->inTransaction()
+            (new Yaysondb(['A' => $fresh->reveal(), 'B' => $fresh->reveal()]))->inTransaction()
         );
 
         $this->assertTrue(
-            (new Yaysondb([$fresh->reveal(), $trans->reveal()]))->inTransaction()
+            (new Yaysondb(['A' => $fresh->reveal(), 'B' => $trans->reveal()]))->inTransaction()
         );
     }
 
     public function testReset()
     {
-        $collA = $this->prophesize(CollectionInterface::CLASS);
-        $collA->inTransaction()->willReturn(false);
-        $collA->reset()->shouldNotBeCalled();
+        $engineA = $this->prophesize(EngineInterface::CLASS);
+        $engineA->inTransaction()->willReturn(false);
+        $engineA->reset()->shouldNotBeCalled();
 
-        $collB = $this->prophesize(CollectionInterface::CLASS);
-        $collB->inTransaction()->willReturn(true);
-        $collB->reset()->shouldBeCalled();
+        $engineB = $this->prophesize(EngineInterface::CLASS);
+        $engineB->inTransaction()->willReturn(true);
+        $engineB->reset()->shouldBeCalled();
 
-        (new Yaysondb([$collA->reveal(), $collB->reveal()]))->reset();
+        (new Yaysondb(['A' => $engineA->reveal(), 'B' => $engineB->reveal()]))->reset();
     }
 }

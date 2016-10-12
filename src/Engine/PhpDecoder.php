@@ -14,7 +14,7 @@ class PhpDecoder implements DecoderInterface
      */
     public function encode(array $content): string
     {
-        return 'return ' . var_export($content, true) . ';';
+        return '<?php return ' . var_export($content, true) . ';';
     }
 
     /**
@@ -22,6 +22,8 @@ class PhpDecoder implements DecoderInterface
      */
     public function decode(string $source): array
     {
-        return (array)eval($source);
+        return (array)eval(
+            preg_replace('/^<\?php /', '', $source)
+        );
     }
 }
