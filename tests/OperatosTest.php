@@ -1,14 +1,18 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace hanneskod\yaysondb;
 
 use hanneskod\yaysondb\Operators as y;
 
 class OperatorsTest extends \PHPUnit_Framework_TestCase
 {
+    use MockFactoryTrait;
+
     public function testDoc()
     {
-        $doc = y::doc(['key' => $this->createTrueExpr()]);
+        $doc = y::doc(['key' => $this->createExpressionMock(true)]);
 
         $this->assertTrue(
             $doc->evaluate(['key' => 'void']),
@@ -24,14 +28,14 @@ class OperatorsTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertFalse(
-            y::doc(['key' => $this->createFalseExpr()])->evaluate(['key' => 'void']),
+            y::doc(['key' => $this->createExpressionMock(false)])->evaluate(['key' => 'void']),
             'Internal expressions returns false'
         );
     }
 
     public function testDocNotAnExpressionException()
     {
-        $this->setExpectedException('hanneskod\yaysondb\Exception\InvalidArgumentException');
+        $this->setExpectedException('hanneskod\yaysondb\Exception\RuntimeException');
         y::doc(['key' => 'not-an-expression']);
     }
 
@@ -116,50 +120,50 @@ class OperatorsTest extends \PHPUnit_Framework_TestCase
     public function testAll()
     {
         $this->assertTrue(
-            y::all($this->createTrueExpr(), $this->createTrueExpr())->evaluate('')
+            y::all($this->createExpressionMock(true), $this->createExpressionMock(true))->evaluate('')
         );
         $this->assertFalse(
-            y::all($this->createTrueExpr(), $this->createFalseExpr())->evaluate('')
+            y::all($this->createExpressionMock(true), $this->createExpressionMock(false))->evaluate('')
         );
     }
 
     public function testAtLeastOne()
     {
         $this->assertTrue(
-            y::atLeastOne($this->createTrueExpr(), $this->createFalseExpr())->evaluate('')
+            y::atLeastOne($this->createExpressionMock(true), $this->createExpressionMock(false))->evaluate('')
         );
         $this->assertFalse(
-            y::atLeastOne($this->createFalseExpr(), $this->createFalseExpr())->evaluate('')
+            y::atLeastOne($this->createExpressionMock(false), $this->createExpressionMock(false))->evaluate('')
         );
     }
 
     public function testExactly()
     {
         $this->assertTrue(
-            y::exactly(2, $this->createTrueExpr(), $this->createTrueExpr())->evaluate('')
+            y::exactly(2, $this->createExpressionMock(true), $this->createExpressionMock(true))->evaluate('')
         );
         $this->assertFalse(
-            y::exactly(2, $this->createTrueExpr(), $this->createFalseExpr())->evaluate('')
+            y::exactly(2, $this->createExpressionMock(true), $this->createExpressionMock(false))->evaluate('')
         );
     }
 
     public function testNone()
     {
         $this->assertTrue(
-            y::none($this->createFalseExpr(), $this->createFalseExpr())->evaluate('')
+            y::none($this->createExpressionMock(false), $this->createExpressionMock(false))->evaluate('')
         );
         $this->assertFalse(
-            y::none($this->createTrueExpr(), $this->createFalseExpr())->evaluate('')
+            y::none($this->createExpressionMock(true), $this->createExpressionMock(false))->evaluate('')
         );
     }
 
     public function testOne()
     {
         $this->assertTrue(
-            y::one($this->createTrueExpr(), $this->createFalseExpr())->evaluate('')
+            y::one($this->createExpressionMock(true), $this->createExpressionMock(false))->evaluate('')
         );
         $this->assertFalse(
-            y::one($this->createTrueExpr(), $this->createTrueExpr())->evaluate('')
+            y::one($this->createExpressionMock(true), $this->createExpressionMock(true))->evaluate('')
         );
     }
 
@@ -253,23 +257,5 @@ class OperatorsTest extends \PHPUnit_Framework_TestCase
                 'another string'
             ])
         );
-    }
-
-    private function createTrueExpr()
-    {
-        $expr = $this->createMock('\hanneskod\yaysondb\Expr');
-        $expr->expects($this->any())
-            ->method('evaluate')
-            ->will($this->returnValue(true));
-        return $expr;
-    }
-
-    private function createFalseExpr()
-    {
-        $expr = $this->createMock('\hanneskod\yaysondb\Expr');
-        $expr->expects($this->any())
-            ->method('evaluate')
-            ->will($this->returnValue(false));
-        return $expr;
     }
 }

@@ -5,40 +5,75 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/hanneskod/yaysondb.svg?style=flat-square)](https://scrutinizer-ci.com/g/hanneskod/yaysondb)
 [![Dependency Status](https://img.shields.io/gemnasium/hanneskod/yaysondb.svg?style=flat-square)](https://gemnasium.com/hanneskod/yaysondb)
 
-Flat file db storing data as json arrays
+Flat file db in pure php
 
 Why?
 ----
-Partly as a learning exercise, partly since I needed a simple and PHP only DB 
+Partly as a learning exercise, partly since I needed a simple and PHP only DB
 for some cli scripts.
 
 ### Features
 
- * Enforces `_id` field in a manner similar to mongoDB.
- * Powerfull searches using search documents.
- * Supports limits and orderBy expressions.
- * No concurrency checks.
- * Supports loading collections from directory.
+ * [Powerfull searches using search documents](#the-search-document)
+ * Supports limits, ordering and custom filtering expressions
+ * Multiple filesystem support through [Flysystem](https://flysystem.thephpleague.com)
+ * [Simple transaction support](#transactions)
+ * [Validates that source has not been altered before writing](#concurrency-protection)
+ * Fast logging with the dedicated LogEngine
 
 Installation
 ------------
-Install using [composer](http://getcomposer.org/). Exists as
-[hanneskod/yaysondb](https://packagist.org/packages/hanneskod/yaysondb)
-in the [packagist](https://packagist.org/) repository:
+```bash
+composer require hanneskod/yaysondb
+```
 
-    composer require hanneskod/yaysondb
+Usage
+-----
 
-CRUD usage
-----------
-[`Collection`](/src/Collection.php) works on json data.
+### Setup
+
+[`Yaysondb`](/src/Yaysondb.php) works as a handler for multiple collections.
+
+```php
+use hanneskod\yaysondb\Yaysondb;
+use hanneskod\yaysondb\Engine\FlysystemEngine;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Adapter\Local;
+
+$db = new Yaysondb([
+    'table' => new FlysystemEngine(
+        'data.json',
+        new Filesystem(new Local('path-to-files'))
+    )
+]);
+```
+
+Access [`collection`](/src/CollectionInterface.php) through property or
+`collection()`
+
+```php
+$db->table === $db->collection('table');
+```
 
 ### Create
 
 ```php
-$collection = new \hanneskod\yaysondb\Collection($jsonEncodedArray);
-$collection->insert(['_id' => 'some-id', 'name' => 'foobar']);
-$updatedJsonContent = json_encode($collection);
+$db->table->insert(['name' => 'foobar']);
 ```
+
+#### Transactions
+
+Commit or rollback changes using `commit()`, `reset()` and `inTransaction()`
+
+```php
+$db->table->commit();
+```
+
+#### Concurrency protection
+
+Yaysondb supports limited concurrency protection when using the flysystem engine.
+A hash of the backend file is calculated at each read and any write action will
+fail if the hash has changed.
 
 ### Read
 
@@ -48,7 +83,7 @@ Create search documents using the [`Operators`](/src/Operators.php) class.
 use hanneskod\yaysondb\Operators as y;
 
 // Find all documents with an address in new york
-$result = $collection->find(
+$result = $db->table->find(
     y::doc([
         'address' => y::doc([
             'town' => y::regexp('/new york/i')
@@ -56,9 +91,9 @@ $result = $collection->find(
     ])
 );
 
-// The result set is iterable
-foreach ($result as $id => $doc) {
-    // ...
+// The result set is filterable
+foreach ($result->limit(2) as $id => $doc) {
+    // iterate over the first 2 results
 }
 ```
 
@@ -101,26 +136,3 @@ values.
 
 `Collection::delete()` takes a search document as sole argument. Documents
 matching the search document are removed.
-
-Using the DB wrapper
---------------------
-[`Yaysondb`](/src/Yaysondb.php) works as a handler for multiple collections.
-
-```php
-use hanneskod\yaysondb\Yaysondb;
-use hanneskod\yaysondb\Adapter\DirectoryAdapter;
-
-$db = new Yaysondb(new DirectoryAdapter('path-to-json-files'));
-
-// handle to path-to-json-files/mycollection.json
-$db->mycollection;
-
-// commit collection updates
-$db->commit('mycollection');
-```
-
-Credits
--------
-Yaysondb is covered under the [WTFPL](http://www.wtfpl.net/)
-
-@author Hannes Forsgård (hannes.forsgard@fripost.org)

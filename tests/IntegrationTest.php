@@ -1,70 +1,101 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace hanneskod\yaysondb;
 
 use hanneskod\yaysondb\Operators as y;
+use hanneskod\yaysondb\Engine\FlysystemEngine;
+use hanneskod\yaysondb\Engine\JsonDecoder;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Memory\MemoryAdapter;
 
 class IntegrationTest extends \PHPUnit_Framework_TestCase
 {
-    public function testFilterSetX()
+    private static $decoderClasses = [
+        Engine\JsonDecoder::CLASS,
+        Engine\PhpDecoder::CLASS,
+        Engine\SerializingDecoder::CLASS
+    ];
+
+    public function dbProvider()
     {
-        $this->assertEquals(
-            'setX_DsetX_E',
-            $this->flattenNames(
-                $this->getDB()->testdata
-                    ->find(y::doc(['setX' => y::exists()]))
-                    ->orderBy('name')
-                    ->limit(3, 3)
-            )
+        $menory = new Filesystem(new MemoryAdapter);
+
+        foreach (self::$decoderClasses as $decoderClass) {
+            $menory->put('data', '');
+            yield [
+                new Yaysondb([new FlysystemEngine('data', $menory, new $decoderClass)])
+            ];
+        }
+    }
+
+    /**
+     * @dataProvider dbProvider
+     */
+    public function testFilterName(Yaysondb $db)
+    {
+        $db->data->insert(['name' => 'D']);
+        $db->data->insert(['no-name' => 'foo']);
+        $db->data->insert(['name' => 'C']);
+        $db->data->insert(['name' => 'B']);
+        $db->data->insert(['name' => 'A']);
+
+        $this->assertCount(5, $db->data);
+
+        $result = $db->data->find(y::doc(['name' => y::exists()]))->orderBy('name')->limit(2, 1);
+
+        $this->assertSame(
+            [['name' => 'B'], ['name' => 'C']],
+            iterator_to_array($result)
         );
     }
 
-    public function testFindAddressesInMalmo()
+    /**
+     * @dataProvider dbProvider
+     */
+    public function testFindAddressesInMalmo(Yaysondb $db)
     {
-        $this->assertEquals(
+        $db->data->insert([
+            "name" => "Ebbe",
+            "address" => [
+                "town" => "Malmo"
+            ]
+        ]);
+
+        $db->data->insert([
+            "name" => "Emmy",
+            "address" => [
+                "town" => "Goteborg"
+            ]
+        ]);
+
+        $this->assertSame(
             'Ebbe',
-            $this->flattenNames(
-                $this->getDB()->testdata->find(
-                    y::doc([
-                        'address' => y::doc([
-                            'town' => y::regexp('/malmo/i')
-                        ])
-                    ])
-                )
-            )
+            $db->data->find(y::doc([
+                'address' => y::doc([
+                    'town' => y::regexp('/malmo/i')
+                ])
+            ]))->first()['name']
         );
     }
 
-    public function testFindMiscAllStrings()
+    /**
+     * @dataProvider dbProvider
+     */
+    public function testUpdate(Yaysondb $db)
     {
-        $this->assertEquals(
-            'Emmy',
-            $this->flattenNames(
-                $this->getDB()->testdata->find(
-                    y::doc([
-                        'misc' => y::listAll(
-                            y::type('string')
-                        )
-                    ])
-                )
-            )
+        $id = $db->data->insert(['name' => 'foo']);
+        $count = $db->data->update(y::doc(['name' => y::exists()]), ['age' => 10]);
+
+        $this->assertSame(1, $count);
+
+        $this->assertSame(
+            [
+                'name' => 'foo',
+                'age' => 10
+            ],
+            $db->data->read($id)
         );
-    }
-
-    private function getDB()
-    {
-        if (!isset($this->db)) {
-            $this->db = new Yaysondb(new Adapter\DirectoryAdapter(__DIR__));
-        }
-        return $this->db;
-    }
-
-    private function flattenNames(DocumentSet $set)
-    {
-        $names = '';
-        foreach ($set as $doc) {
-            $names .= $doc['name'];
-        }
-        return $names;
     }
 }
