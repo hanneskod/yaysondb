@@ -22,6 +22,10 @@ class PhpDecoder implements DecoderInterface
      */
     public function decode(string $source): array
     {
+        if ('' == $source) {
+            return [];
+        }
+
         return (array)eval(
             preg_replace('/^<\?php /', '', $source)
         );

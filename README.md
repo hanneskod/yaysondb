@@ -14,11 +14,12 @@ for some cli scripts.
 
 ### Features
 
- * Powerfull searches using search documents.
- * Supports limits, ordering and custom filtering expressions.
- * Multiple filesystem support through flysystem.
- * Validates that source has not been altered before writing.
- * Fast logging with the dedicated LogEngine.
+ * [Powerfull searches using search documents](#the-search-document)
+ * Supports limits, ordering and custom filtering expressions
+ * Multiple filesystem support through [Flysystem](https://flysystem.thephpleague.com)
+ * [Simple transaction support](#transactions)
+ * [Validates that source has not been altered before writing](#concurrency-protection)
+ * Fast logging with the dedicated LogEngine
 
 Installation
 ------------
@@ -40,25 +41,39 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\Adapter\Local;
 
 $db = new Yaysondb([
-    'collectionId' => new FlysystemEngine(
+    'table' => new FlysystemEngine(
         'data.json',
         new Filesystem(new Local('path-to-files'))
     )
 ]);
+```
 
-// access [`collection`](/src/CollectionInterface.php) through property or collection()
-$db->collectionId === $db->collection('collectionId');
+Access [`collection`](/src/CollectionInterface.php) through property or
+`collection()`
 
-// commit changes in all loaded collections
-$db->commit();
+```php
+$db->table === $db->collection('table');
 ```
 
 ### Create
 
 ```php
-$db->collectionId->insert(['name' => 'foobar']);
-$db->collectionId->commit();
+$db->table->insert(['name' => 'foobar']);
 ```
+
+#### Transactions
+
+Commit or rollback changes using `commit()`, `reset()` and `inTransaction()`
+
+```php
+$db->table->commit();
+```
+
+#### Concurrency protection
+
+Yaysondb supports limited concurrency protection when using the flysystem engine.
+A hash of the backend file is calculated at each read and any write action will
+fail if the hash has changed.
 
 ### Read
 
@@ -68,7 +83,7 @@ Create search documents using the [`Operators`](/src/Operators.php) class.
 use hanneskod\yaysondb\Operators as y;
 
 // Find all documents with an address in new york
-$result = $db->collectionId->find(
+$result = $db->table->find(
     y::doc([
         'address' => y::doc([
             'town' => y::regexp('/new york/i')

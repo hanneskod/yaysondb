@@ -22,6 +22,10 @@ class SerializingDecoder implements DecoderInterface
      */
     public function decode(string $source): array
     {
+        if ('' == $source) {
+            return [];
+        }
+
         return (array)unserialize($source);
     }
 }

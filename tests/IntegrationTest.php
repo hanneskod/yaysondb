@@ -12,20 +12,29 @@ use League\Flysystem\Memory\MemoryAdapter;
 
 class IntegrationTest extends \PHPUnit_Framework_TestCase
 {
-    private function createDatabase(): Yaysondb
+    private static $decoderClasses = [
+        Engine\JsonDecoder::CLASS,
+        Engine\PhpDecoder::CLASS,
+        Engine\SerializingDecoder::CLASS
+    ];
+
+    public function dbProvider()
     {
         $menory = new Filesystem(new MemoryAdapter);
-        $menory->write('data', '');
 
-        return new Yaysondb([
-            new FlysystemEngine('data', $menory)
-        ]);
+        foreach (self::$decoderClasses as $decoderClass) {
+            $menory->put('data', '');
+            yield [
+                new Yaysondb([new FlysystemEngine('data', $menory, new $decoderClass)])
+            ];
+        }
     }
 
-    public function testFilterName()
+    /**
+     * @dataProvider dbProvider
+     */
+    public function testFilterName(Yaysondb $db)
     {
-        $db = $this->createDatabase();
-
         $db->data->insert(['name' => 'D']);
         $db->data->insert(['no-name' => 'foo']);
         $db->data->insert(['name' => 'C']);
@@ -34,18 +43,19 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(5, $db->data);
 
+        $result = $db->data->find(y::doc(['name' => y::exists()]))->orderBy('name')->limit(2, 1);
+
         $this->assertSame(
             [['name' => 'B'], ['name' => 'C']],
-            iterator_to_array(
-                $db->data->find(y::doc(['name' => y::exists()]))->orderBy('name')->limit(2, 1)
-            )
+            iterator_to_array($result)
         );
     }
 
-    public function testFindAddressesInMalmo()
+    /**
+     * @dataProvider dbProvider
+     */
+    public function testFindAddressesInMalmo(Yaysondb $db)
     {
-        $db = $this->createDatabase();
-
         $db->data->insert([
             "name" => "Ebbe",
             "address" => [
@@ -70,10 +80,11 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testUpdate()
+    /**
+     * @dataProvider dbProvider
+     */
+    public function testUpdate(Yaysondb $db)
     {
-        $db = $this->createDatabase();
-
         $id = $db->data->insert(['name' => 'foo']);
         $count = $db->data->update(y::doc(['name' => y::exists()]), ['age' => 10]);
 
