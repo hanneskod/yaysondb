@@ -33,4 +33,12 @@ abstract class AbstractsonDecorderTest extends \PHPUnit_Framework_TestCase
             )
         );
     }
+
+    public function testDecodeEmptyString()
+    {
+        $this->assertSame(
+            [],
+            $this->createDecoder()->decode('')
+        );
+    }
 }

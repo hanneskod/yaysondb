@@ -12,7 +12,7 @@ use hanneskod\yaysondb\Expression\ExpressionInterface;
 class ExpressionFilter implements FilterInterface
 {
     /**
-     * @var ExpressionFilter Search expression
+     * @var ExpressionInterface Search expression
      */
     private $expression;
 
