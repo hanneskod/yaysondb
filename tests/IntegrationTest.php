@@ -20,12 +20,12 @@ class IntegrationTest extends \PHPUnit_Framework_TestCase
 
     public function dbProvider()
     {
-        $menory = new Filesystem(new MemoryAdapter);
+        $memory = new Filesystem(new MemoryAdapter);
 
         foreach (self::$decoderClasses as $decoderClass) {
-            $menory->put('data', '');
+            $memory->put('data', '');
             yield [
-                new Yaysondb([new FlysystemEngine('data', $menory, new $decoderClass)])
+                new Yaysondb([new FlysystemEngine('data', $memory, new $decoderClass)])
             ];
         }
     }

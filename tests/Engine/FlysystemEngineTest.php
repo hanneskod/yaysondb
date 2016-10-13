@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace hanneskod\yaysondb\Engine;
 
+use hanneskod\yaysondb\Exception\FileNotFoundException;
+use hanneskod\yaysondb\Exception\FileModifiedException;
 use League\Flysystem\FilesystemInterface;
 use Prophecy\Argument;
 
@@ -12,6 +14,7 @@ class FlysystemEngineTest extends \PHPUnit_Framework_TestCase
     private function createEngine(array $content = [], string $fname = 'fname'): FlysystemEngine
     {
         $flysystem = $this->prophesize(FilesystemInterface::CLASS);
+        $flysystem->has($fname)->willReturn(true);
         $flysystem->read($fname)->willReturn('raw-content');
 
         $decoder = $this->prophesize(DecoderInterface::CLASS);
@@ -131,9 +134,19 @@ class FlysystemEngineTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($engine->inTransaction());
     }
 
+    public function testExceptionOnUnreadableSource()
+    {
+        $flysystem = $this->prophesize(FilesystemInterface::CLASS);
+        $flysystem->has('foobar')->willReturn(false);
+
+        $this->setExpectedException(FileNotFoundException::CLASS);
+        new FlysystemEngine('foobar', $flysystem->reveal());
+    }
+
     public function testExceptionOnChangedSourceContent()
     {
         $flysystem = $this->prophesize(FilesystemInterface::CLASS);
+        $flysystem->has(Argument::any())->willReturn(true);
 
         // Different source is returned at each read..
         $count = 0;
@@ -150,13 +163,14 @@ class FlysystemEngineTest extends \PHPUnit_Framework_TestCase
             $decoder->reveal()
         );
 
-        $this->setExpectedException('hanneskod\yaysondb\Exception\SourceModifiedException');
+        $this->setExpectedException(FileModifiedException::CLASS);
         $engine->commit();
     }
 
     public function testCommit()
     {
         $flysystem = $this->prophesize(FilesystemInterface::CLASS);
+        $flysystem->has('fname')->willReturn(true);
         $flysystem->read('fname')->willReturn('raw-content');
         $flysystem->update('fname', 'updated-content')->shouldBeCalled();
 
@@ -180,6 +194,7 @@ class FlysystemEngineTest extends \PHPUnit_Framework_TestCase
     public function testGuessPhpMimeType()
     {
         $flysystem = $this->prophesize(FilesystemInterface::CLASS);
+        $flysystem->has('data.php')->willReturn(true);
         $flysystem->getMimetype('data.php')->willReturn('application/x-httpd-php');
         $flysystem->read('data.php')->willReturn('<?php return ["item" => ["foo"]];');
 
@@ -197,6 +212,7 @@ class FlysystemEngineTest extends \PHPUnit_Framework_TestCase
     public function testGuessJsonMimeType()
     {
         $flysystem = $this->prophesize(FilesystemInterface::CLASS);
+        $flysystem->has('data.json')->willReturn(true);
         $flysystem->getMimetype('data.json')->willReturn('application/json  ');
         $flysystem->read('data.json')->willReturn('{"item": ["foo"]}');
 

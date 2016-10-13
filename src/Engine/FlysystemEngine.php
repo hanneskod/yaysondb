@@ -4,7 +4,8 @@ declare(strict_types = 1);
 
 namespace hanneskod\yaysondb\Engine;
 
-use hanneskod\yaysondb\Exception\SourceModifiedException;
+use hanneskod\yaysondb\Exception\FileNotFoundException;
+use hanneskod\yaysondb\Exception\FileModifiedException;
 use League\Flysystem\FilesystemInterface;
 
 /**
@@ -20,7 +21,7 @@ class FlysystemEngine implements EngineInterface
     /**
      * @var FilesystemInterface Filesystem where source is found
      */
-    private $fs;
+    private $fsystem;
 
     /**
      * @var DecoderInterface Decoder used to encode and deconde content
@@ -42,10 +43,17 @@ class FlysystemEngine implements EngineInterface
      */
     private $inTransaction;
 
-    public function __construct(string $fname, FilesystemInterface $fs, DecoderInterface $decoder = null)
+    /**
+     * @throws FileNotFoundException If fname does not exist in filesystem
+     */
+    public function __construct(string $fname, FilesystemInterface $fsystem, DecoderInterface $decoder = null)
     {
+        if (!$fsystem->has($fname)) {
+            throw new FileNotFoundException("Unable to read file $fname");
+        }
+
         $this->fname = $fname;
-        $this->fs = $fs;
+        $this->fsystem = $fsystem;
         $this->decoder = $decoder ?: $this->guessDecoder();
         $this->reset();
     }
@@ -58,7 +66,7 @@ class FlysystemEngine implements EngineInterface
     public function reset()
     {
         $this->inTransaction = false;
-        $raw = $this->fs->read($this->fname);
+        $raw = (string)$this->fsystem->read($this->fname);
         $this->hash = md5($raw);
         $this->docs = $this->decoder->decode($raw);
     }
@@ -113,7 +121,7 @@ class FlysystemEngine implements EngineInterface
 
     public function clear()
     {
-        if ($this->docs) {
+        if (!empty($this->docs)) {
             $this->inTransaction = true;
             $this->docs = [];
         }
@@ -125,16 +133,16 @@ class FlysystemEngine implements EngineInterface
     }
 
     /**
-     * @throws SourceModifiedException If source is out of date
+     * @throws FileModifiedException If source is out of date
      */
     public function commit()
     {
-        if (md5($this->fs->read($this->fname)) != $this->hash) {
-            throw new SourceModifiedException('Unable to commit changes: source data has changed');
+        if (md5($this->fsystem->read($this->fname)) != $this->hash) {
+            throw new FileModifiedException('Unable to commit changes: source data has changed');
         }
 
         $raw = $this->decoder->encode($this->docs);
-        $this->fs->update($this->fname, $raw);
+        $this->fsystem->update($this->fname, $raw);
         $this->hash = md5($raw);
         $this->inTransaction = false;
     }
@@ -144,7 +152,7 @@ class FlysystemEngine implements EngineInterface
      */
     private function guessDecoder(): DecoderInterface
     {
-        switch ($this->fs->getMimetype($this->fname)) {
+        switch ($this->fsystem->getMimetype($this->fname)) {
             case 'application/x-httpd-php':
                 return new PhpDecoder;
             case 'text/plain':
