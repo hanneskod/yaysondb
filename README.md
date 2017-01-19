@@ -5,7 +5,7 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/hanneskod/yaysondb.svg?style=flat-square)](https://scrutinizer-ci.com/g/hanneskod/yaysondb)
 [![Dependency Status](https://img.shields.io/gemnasium/hanneskod/yaysondb.svg?style=flat-square)](https://gemnasium.com/hanneskod/yaysondb)
 
-Flat file db in pure php
+Flat file db in pure php.
 
 Why?
 ----
@@ -24,7 +24,7 @@ for some cli scripts.
 Installation
 ------------
 ```bash
-composer require hanneskod/yaysondb
+composer require hanneskod/yaysondb:^2.0
 ```
 
 Usage
