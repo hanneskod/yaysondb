@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace hanneskod\yaysondb\Filter;
 
-class LimitFilterTest extends \PHPUnit_Framework_TestCase
+class LimitFilterTest extends \PHPUnit\Framework\TestCase
 {
     public function testCount()
     {

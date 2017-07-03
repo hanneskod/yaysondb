@@ -10,7 +10,7 @@ use hanneskod\yaysondb\Engine\JsonDecoder;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Memory\MemoryAdapter;
 
-class IntegrationTest extends \PHPUnit_Framework_TestCase
+class IntegrationTest extends \PHPUnit\Framework\TestCase
 {
     private static $decoderClasses = [
         Engine\JsonDecoder::CLASS,

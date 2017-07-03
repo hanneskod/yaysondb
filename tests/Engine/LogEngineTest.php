@@ -6,7 +6,7 @@ namespace hanneskod\yaysondb\Engine;
 
 use hanneskod\yaysondb\Exception\LogicException;
 
-class LogEngineTest extends \PHPUnit_Framework_TestCase
+class LogEngineTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetId()
     {
@@ -17,7 +17,7 @@ class LogEngineTest extends \PHPUnit_Framework_TestCase
     }
     public function testExceptionOnWritingUsingId()
     {
-        $this->setExpectedException(LogicException::CLASS);
+        $this->expectException(LogicException::CLASS);
         (new LogEngine('php://memory'))->write('id', []);
     }
 
@@ -50,25 +50,25 @@ class LogEngineTest extends \PHPUnit_Framework_TestCase
 
     public function testHasNotSupported()
     {
-        $this->setExpectedException(LogicException::CLASS);
+        $this->expectException(LogicException::CLASS);
         (new LogEngine('php://memory'))->has('');
     }
 
     public function testReadNotSupported()
     {
-        $this->setExpectedException(LogicException::CLASS);
+        $this->expectException(LogicException::CLASS);
         (new LogEngine('php://memory'))->read('');
     }
 
     public function testDeleteNotSupported()
     {
-        $this->setExpectedException(LogicException::CLASS);
+        $this->expectException(LogicException::CLASS);
         (new LogEngine('php://memory'))->delete('');
     }
 
     public function testClearNotSupported()
     {
-        $this->setExpectedException(LogicException::CLASS);
+        $this->expectException(LogicException::CLASS);
         (new LogEngine('php://memory'))->clear();
     }
 }

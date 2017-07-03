@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace hanneskod\yaysondb\Filter;
 
-class CallableFilterTest extends \PHPUnit_Framework_TestCase
+class CallableFilterTest extends \PHPUnit\Framework\TestCase
 {
     public function testFilter()
     {

@@ -6,7 +6,7 @@ namespace hanneskod\yaysondb;
 
 use hanneskod\yaysondb\Engine\EngineInterface;
 
-class YaysondbTest extends \PHPUnit_Framework_TestCase
+class YaysondbTest extends \PHPUnit\Framework\TestCase
 {
     public function testLoad()
     {
@@ -68,7 +68,7 @@ class YaysondbTest extends \PHPUnit_Framework_TestCase
 
     public function testExceptionOnUnknownCollection()
     {
-        $this->setExpectedException(Exception\LogicException::CLASS);
+        $this->expectException(Exception\LogicException::CLASS);
         (new Yaysondb)->collection('does-not-exist');
     }
 

@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace hanneskod\yaysondb\Engine;
 
-abstract class AbstractsonDecorderTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractsonDecorderTest extends \PHPUnit\Framework\TestCase
 {
     abstract protected function createDecoder(): DecoderInterface;
 

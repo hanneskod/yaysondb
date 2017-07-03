@@ -6,7 +6,7 @@ namespace hanneskod\yaysondb\Filter;
 
 use hanneskod\yaysondb\MockFactoryTrait;
 
-class ExpressionFilterTest extends \PHPUnit_Framework_TestCase
+class ExpressionFilterTest extends \PHPUnit\Framework\TestCase
 {
     use MockFactoryTrait;
 

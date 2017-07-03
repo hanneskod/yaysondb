@@ -6,7 +6,7 @@ namespace hanneskod\yaysondb;
 
 use Prophecy\Argument;
 
-class FilterableTest extends \PHPUnit_Framework_TestCase
+class FilterableTest extends \PHPUnit\Framework\TestCase
 {
     public function testCount()
     {

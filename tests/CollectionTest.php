@@ -8,14 +8,14 @@ use hanneskod\yaysondb\Engine\EngineInterface;
 use hanneskod\yaysondb\Exception\LogicException;
 use Prophecy\Argument;
 
-class CollectionTest extends \PHPUnit_Framework_TestCase
+class CollectionTest extends \PHPUnit\Framework\TestCase
 {
     public function testExceptionOnReadingUnknownDocument()
     {
         $engine = $this->prophesize(EngineInterface::CLASS);
         $engine->has('foo')->willReturn(false);
 
-        $this->setExpectedException(LogicException::CLASS);
+        $this->expectException(LogicException::CLASS);
         (new Collection($engine->reveal()))->read('foo');
     }
 

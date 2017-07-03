@@ -9,7 +9,7 @@ use hanneskod\yaysondb\Exception\FileModifiedException;
 use League\Flysystem\FilesystemInterface;
 use Prophecy\Argument;
 
-class FlysystemEngineTest extends \PHPUnit_Framework_TestCase
+class FlysystemEngineTest extends \PHPUnit\Framework\TestCase
 {
     private function createEngine(array $content = [], string $fname = 'fname'): FlysystemEngine
     {
@@ -139,7 +139,7 @@ class FlysystemEngineTest extends \PHPUnit_Framework_TestCase
         $flysystem = $this->prophesize(FilesystemInterface::CLASS);
         $flysystem->has('foobar')->willReturn(false);
 
-        $this->setExpectedException(FileNotFoundException::CLASS);
+        $this->expectException(FileNotFoundException::CLASS);
         new FlysystemEngine('foobar', $flysystem->reveal());
     }
 
@@ -163,7 +163,7 @@ class FlysystemEngineTest extends \PHPUnit_Framework_TestCase
             $decoder->reveal()
         );
 
-        $this->setExpectedException(FileModifiedException::CLASS);
+        $this->expectException(FileModifiedException::CLASS);
         $engine->commit();
     }
 

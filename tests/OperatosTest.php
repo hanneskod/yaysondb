@@ -6,7 +6,7 @@ namespace hanneskod\yaysondb;
 
 use hanneskod\yaysondb\Operators as y;
 
-class OperatorsTest extends \PHPUnit_Framework_TestCase
+class OperatorsTest extends \PHPUnit\Framework\TestCase
 {
     use MockFactoryTrait;
 
@@ -35,7 +35,7 @@ class OperatorsTest extends \PHPUnit_Framework_TestCase
 
     public function testDocNotAnExpressionException()
     {
-        $this->setExpectedException('hanneskod\yaysondb\Exception\RuntimeException');
+        $this->expectException('hanneskod\yaysondb\Exception\RuntimeException');
         y::doc(['key' => 'not-an-expression']);
     }
 
