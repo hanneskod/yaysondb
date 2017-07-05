@@ -37,9 +37,9 @@ class Collection extends Filterable implements CollectionInterface
         return $this->engine->read($id);
     }
 
-    public function insert(array $document): string
+    public function insert(array $document, string $id = ''): string
     {
-        return $this->engine->write('', $document);
+        return $this->engine->write($id, $document);
     }
 
     public function update(ExpressionInterface $expression, array $newDocument): int

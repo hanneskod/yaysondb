@@ -42,6 +42,17 @@ class CollectionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testInsertWithId()
+    {
+        $engine = $this->prophesize(EngineInterface::CLASS);
+        $engine->write('id', ['foo'])->willReturn('id')->shouldBeCalled();
+
+        $this->assertSame(
+            'id',
+            (new Collection($engine->reveal()))->insert(['foo'], 'id')
+        );
+    }
+
     public function testUpdate()
     {
         $engine = $this->prophesize(EngineInterface::CLASS);

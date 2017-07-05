@@ -24,9 +24,11 @@ interface CollectionInterface extends FilterableInterface, TransactableInterface
     /**
      * Insert document into collection
      *
+     * @param  array  $document Document to insert
+     * @param  string $id       Optional document id
      * @return string Id of inserted document
      */
-    public function insert(array $document): string;
+    public function insert(array $document, string $id = ''): string;
 
     /**
      * Get document from id
