@@ -47,7 +47,7 @@ class IntegrationTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [['name' => 'B'], ['name' => 'C']],
-            iterator_to_array($result)
+            array_values(iterator_to_array($result))
         );
     }
 

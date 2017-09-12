@@ -70,8 +70,8 @@ class Filterable implements FilterableInterface
 
     public function getIterator(): \Generator
     {
-        foreach ($this->docs as $doc) {
-            yield $doc;
+        foreach ($this->docs as $id => $doc) {
+            yield $id => $doc;
         }
     }
 

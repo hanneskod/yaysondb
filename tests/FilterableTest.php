@@ -16,8 +16,8 @@ class FilterableTest extends \PHPUnit\Framework\TestCase
     public function testIteration()
     {
         $this->assertSame(
-            [1, 2],
-            iterator_to_array(new Filterable(new \ArrayIterator([1, 2])))
+            ['a' => 'b', 'c' => 'd'],
+            iterator_to_array(new Filterable(new \ArrayIterator(['a' => 'b', 'c' => 'd'])))
         );
     }
 
@@ -69,9 +69,9 @@ class FilterableTest extends \PHPUnit\Framework\TestCase
     public function testOrderBy()
     {
         $this->assertSame(
-            [['name' => 'A'], ['name' => 'B']],
+            ['A' => ['name' => 'A'], 'B' => ['name' => 'B']],
             iterator_to_array(
-                (new Filterable(new \ArrayIterator([['name' => 'B'], ['name' => 'A']])))->orderBy('name')
+                (new Filterable(new \ArrayIterator(['B' => ['name' => 'B'], 'A' => ['name' => 'A']])))->orderBy('name')
             )
         );
     }
