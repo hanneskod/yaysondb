@@ -6,6 +6,8 @@ namespace hanneskod\yaysondb\Engine;
 
 use hanneskod\yaysondb\Exception\FileNotFoundException;
 use hanneskod\yaysondb\Exception\FileModifiedException;
+use hanneskod\yaysondb\Exception\FileNotReadableException;
+use hanneskod\yaysondb\Exception\FileNotWritableException;
 use League\Flysystem\FilesystemInterface;
 
 /**
@@ -49,7 +51,7 @@ class FlysystemEngine implements EngineInterface
     public function __construct(string $fname, FilesystemInterface $fsystem, DecoderInterface $decoder = null)
     {
         if (!$fsystem->has($fname)) {
-            throw new FileNotFoundException("Unable to read file $fname");
+            throw new FileNotFoundException("Unable to read '$fname'");
         }
 
         $this->fname = $fname;
@@ -66,7 +68,12 @@ class FlysystemEngine implements EngineInterface
     public function reset()
     {
         $this->inTransaction = false;
-        $raw = (string)$this->fsystem->read($this->fname);
+        $raw = $this->fsystem->read($this->fname);
+
+        if (false === $raw) {
+            throw new FileNotReadableException("Unable to read '{$this->fname}'");
+        }
+
         $this->hash = md5($raw);
         $this->docs = $this->decoder->decode($raw);
     }
@@ -138,11 +145,15 @@ class FlysystemEngine implements EngineInterface
     public function commit()
     {
         if (md5($this->fsystem->read($this->fname)) != $this->hash) {
-            throw new FileModifiedException('Unable to commit changes: source data has changed');
+            throw new FileModifiedException("Unable to commit changes, '{$this->fname}' has changed on disk");
         }
 
         $raw = $this->decoder->encode($this->docs);
-        $this->fsystem->update($this->fname, $raw);
+
+        if (!$this->fsystem->update($this->fname, $raw)) {
+            throw new FileNotWritableException("Unable to write to '{$this->fname}'");
+        }
+
         $this->hash = md5($raw);
         $this->inTransaction = false;
     }

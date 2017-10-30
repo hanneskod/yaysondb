@@ -6,6 +6,8 @@ namespace hanneskod\yaysondb\Engine;
 
 use hanneskod\yaysondb\Exception\FileNotFoundException;
 use hanneskod\yaysondb\Exception\FileModifiedException;
+use hanneskod\yaysondb\Exception\FileNotReadableException;
+use hanneskod\yaysondb\Exception\FileNotWritableException;
 use League\Flysystem\FilesystemInterface;
 use Prophecy\Argument;
 
@@ -172,7 +174,7 @@ class FlysystemEngineTest extends \PHPUnit\Framework\TestCase
         $flysystem = $this->prophesize(FilesystemInterface::CLASS);
         $flysystem->has('fname')->willReturn(true);
         $flysystem->read('fname')->willReturn('raw-content');
-        $flysystem->update('fname', 'updated-content')->shouldBeCalled();
+        $flysystem->update('fname', 'updated-content')->willReturn(true)->shouldBeCalled();
 
         $decoder = $this->prophesize(DecoderInterface::CLASS);
         $decoder->decode('raw-content')->willReturn([]);
@@ -189,6 +191,23 @@ class FlysystemEngineTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($engine->inTransaction());
         $engine->commit();
         $this->assertFalse($engine->inTransaction());
+    }
+
+    public function testCommitFailsIfFlysystemUpdateFails()
+    {
+        $decoder = $this->prophesize(DecoderInterface::CLASS);
+        $decoder->decode('encoded')->willReturn(['doc']);
+        $decoder->encode(['doc'])->willReturn('encoded');
+
+        $flysystem = $this->prophesize(FilesystemInterface::CLASS);
+        $flysystem->has('fname')->willReturn(true);
+        $flysystem->getMimetype('fname')->willReturn('');
+        $flysystem->read('fname')->willReturn('encoded');
+
+        $flysystem->update('fname', 'encoded')->willReturn(false);
+
+        $this->expectException(FileNotWritableException::CLASS);
+        (new FlysystemEngine('fname', $flysystem->reveal(), $decoder->reveal()))->commit();
     }
 
     public function testGuessPhpMimeType()
@@ -225,5 +244,17 @@ class FlysystemEngineTest extends \PHPUnit\Framework\TestCase
             ['foo'],
             $engine->read('item')
         );
+    }
+
+    public function testFailIfFileIsNotReadable()
+    {
+        $flysystem = $this->prophesize(FilesystemInterface::CLASS);
+        $flysystem->has('fname')->willReturn(true);
+        $flysystem->getMimetype('fname')->willReturn('');
+
+        $flysystem->read('fname')->willReturn(false);
+
+        $this->expectException(FileNotReadableException::CLASS);
+        new FlysystemEngine('fname', $flysystem->reveal());
     }
 }
