@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace hanneskod\yaysondb\Engine;
 
+use hanneskod\yaysondb\Exception\RuntimeException;
+
 /**
  * Decoder for the json format
  */
@@ -14,7 +16,13 @@ class JsonDecoder implements DecoderInterface
      */
     public function encode(array $content): string
     {
-        return json_encode($content, JSON_PRETTY_PRINT);
+        $json = json_encode($content, JSON_PRETTY_PRINT);
+
+        if (!$json) {
+            throw new RuntimeException("Unable to encode malformed content");
+        }
+
+        return $json;
     }
 
     /**

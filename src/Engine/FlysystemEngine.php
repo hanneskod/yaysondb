@@ -144,7 +144,7 @@ class FlysystemEngine implements EngineInterface
      */
     public function commit()
     {
-        if (md5($this->fsystem->read($this->fname)) != $this->hash) {
+        if (md5((string)$this->fsystem->read($this->fname)) != $this->hash) {
             throw new FileModifiedException("Unable to commit changes, '{$this->fname}' has changed on disk");
         }
 

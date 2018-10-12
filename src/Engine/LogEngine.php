@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace hanneskod\yaysondb\Engine;
 
 use hanneskod\yaysondb\Exception\LogicException;
+use hanneskod\yaysondb\Exception\RuntimeException;
 
 /**
  * Simple engine for logging purposes
@@ -34,7 +35,13 @@ class LogEngine implements EngineInterface
     public function __construct(string $fname, DecoderInterface $decoder = null)
     {
         $this->fname = $fname;
-        $this->stream = fopen($fname, 'a+');
+        $handle = fopen($fname, 'a+');
+
+        if (!$handle) {
+            throw new RuntimeException("Unable to open stream $fname");
+        }
+
+        $this->stream = $handle;
         $this->decoder = $decoder ?: new SerializingDecoder;
     }
 
