@@ -6,6 +6,14 @@ This project now adheres to [Semantic Versioning](http://semver.org/).
 
 - Nothing..
 
+## [2.2.0] - 2019-07-15
+
+### Fixed
+- Let LogEngine iterate over non-commited content.
+
+### Added
+- FlatJsonDecoder.
+
 ## [2.1.2] - 2017-10-30
 
 ### Fixed

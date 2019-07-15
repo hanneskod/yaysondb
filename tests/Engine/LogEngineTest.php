@@ -48,6 +48,19 @@ class LogEngineTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testIterateNonCommitedContent()
+    {
+        $engine = new LogEngine('php://memory');
+
+        $engine->write('', ['foo']);
+        $engine->write('', ['bar']);
+
+        $this->assertSame(
+            [['foo'], ['bar']],
+            iterator_to_array($engine)
+        );
+    }
+
     public function testHasNotSupported()
     {
         $this->expectException(LogicException::CLASS);

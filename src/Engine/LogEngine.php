@@ -57,6 +57,8 @@ class LogEngine implements EngineInterface
         while ($line = fgets($this->stream)) {
             yield $this->decoder->decode($line);
         }
+
+        yield from $this->newDocs;
     }
 
     /**
