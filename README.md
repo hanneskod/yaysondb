@@ -23,7 +23,7 @@ for some cli scripts.
 Installation
 ------------
 ```bash
-composer require hanneskod/yaysondb:^2.0
+composer require hanneskod/yaysondb
 ```
 
 Usage
