@@ -8,8 +8,6 @@ use hanneskod\yaysondb\Expression\ExpressionInterface;
 
 trait MockFactoryTrait
 {
-    abstract function createMock($originalClassName);
-
     protected function createExpressionMock(bool $return)
     {
         $expression = $this->createMock(ExpressionInterface::CLASS);
